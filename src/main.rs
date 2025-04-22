@@ -66,6 +66,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // POST-Anfrage
     let mut file = File::open(format!("./{file_name}").replace(".mp4", "av.mp4"))?;
+
+    // check if file is not empty
+    if file.metadata()?.len() < 1000 {
+        println!("File is basically empty");
+        return Ok(());
+    }
     let mut file_content = Vec::new();
     file.read_to_end(&mut file_content)?;
 
