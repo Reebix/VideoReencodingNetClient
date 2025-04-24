@@ -44,7 +44,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line");
-        if input != "" {
+        if input.trim() != "" {
             count = input.trim().parse::<u32>().unwrap();
         }
     }
