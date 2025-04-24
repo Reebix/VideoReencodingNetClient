@@ -14,13 +14,15 @@ fn abspath(p: &str) -> Option<String> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut count = 1;
     println!("base_url:port? (e.g. : http://192.168.1.102:8000, leave blank for default):");
+    let mut base_url = "http://192.168.1.102:8000";
+
     let mut input = String::new();
     io::stdin()
         .read_line(&mut input)
         .expect("Failed to read line");
     let input = input.trim();
     if input != "" {
-        let base_url = input;
+        base_url = input;
         println!("base_url: {}", base_url);
     } else {
         println!("Using default base_url");
@@ -49,7 +51,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-    let base_url = "http://192.168.1.102:8000";
     let temp_dir = std::env::temp_dir();
     let temp_dir = temp_dir.to_str().unwrap();
 
