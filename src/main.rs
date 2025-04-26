@@ -35,7 +35,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut loop_ = false;
     let input = input.trim();
-    if input == "Y" || input == "y" {
+    if input.to_lowercase() == "y" {
         loop_ = true;
     } else {
         println!("Not looping");
