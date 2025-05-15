@@ -53,7 +53,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line");
-
         let input = input.trim();
         if input.to_lowercase() != "y" {
             loop_ = false;
