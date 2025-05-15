@@ -1,8 +1,20 @@
+use clap::Parser;
 use reqwest::Client;
 use std::fs::File;
 use std::io;
 use std::io::{Cursor, Read, Write};
 use std::process::Command;
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Arguments {
+    #[arg(short, long, default_value_t = String::from(""))]
+    base_url: String,
+    #[arg(short, long, default_value_t = false)]
+    loop_: bool,
+    // #[arg(short, long, default_value_t = 1)]
+    // count: u32,
+}
 
 fn abspath(p: &str) -> Option<String> {
     let exp_path = shellexpand::full(p).ok()?;
@@ -16,43 +28,53 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("base_url:port? (e.g. : http://192.168.1.102:8000, leave blank for default):");
     let mut base_url = "http://192.168.1.102:8000";
 
+    let args = Arguments::parse();
     let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line");
-    let input = input.trim();
-    if input != "" {
-        base_url = input;
+    if args.base_url != "" {
+        base_url = &*args.base_url;
         println!("base_url: {}", base_url);
     } else {
-        println!("Using default base_url");
-    }
-    println!("loop? (y/N):");
-    let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line");
-
-    let mut loop_ = false;
-    let input = input.trim();
-    if input.to_lowercase() == "y" {
-        loop_ = true;
-    } else {
-        println!("Not looping");
-        // count = 1;
-        println!("How many files to process? (default 1):");
-        let mut input = String::new();
-
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line");
-        if input.trim() != "" {
-            count = input.trim().parse::<u32>().unwrap();
+        let input = input.trim();
+        if input != "" {
+            base_url = input;
+            println!("base_url: {}", base_url);
+        } else {
+            println!("Using default base_url");
+        }
+    }
+
+    let mut loop_ = true;
+    if !Arguments::parse().loop_ {
+        println!("loop? (y/N):");
+        let mut input = String::new();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line");
+
+        let input = input.trim();
+        if input.to_lowercase() != "y" {
+            loop_ = false;
+            println!("Not looping");
+            // count = 1;
+            println!("How many files to process? (default 1):");
+            let mut input = String::new();
+
+            io::stdin()
+                .read_line(&mut input)
+                .expect("Failed to read line");
+            if input.trim() != "" {
+                count = input.trim().parse::<u32>().unwrap();
+            }
         }
     }
 
     let temp_dir = std::env::temp_dir();
     let temp_dir = temp_dir.to_str().unwrap();
+
+    println!("temp_dir: {}", temp_dir);
 
     loop {
         for i in 0..count {
