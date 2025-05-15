@@ -12,8 +12,8 @@ struct Arguments {
     base_url: String,
     #[arg(short, long, default_value_t = false)]
     loop_: bool,
-    // #[arg(short, long, default_value_t = 1)]
-    // count: u32,
+    #[arg(short, long, default_value_t = 1)]
+    count: u32,
 }
 
 fn abspath(p: &str) -> Option<String> {
@@ -59,14 +59,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             loop_ = false;
             println!("Not looping");
             // count = 1;
-            println!("How many files to process? (default 1):");
-            let mut input = String::new();
+            if args.count != 1 {
+                count = args.count;
+            } else {
+                println!("How many files to process? (default 1):");
+                let mut input = String::new();
 
-            io::stdin()
-                .read_line(&mut input)
-                .expect("Failed to read line");
-            if input.trim() != "" {
-                count = input.trim().parse::<u32>().unwrap();
+                io::stdin()
+                    .read_line(&mut input)
+                    .expect("Failed to read line");
+                if input.trim() != "" {
+                    count = input.trim().parse::<u32>().unwrap();
+                }
             }
         }
     }
