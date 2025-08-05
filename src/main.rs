@@ -2,8 +2,8 @@ use clap::Parser;
 use reqwest::Client;
 use std::fs::File;
 use std::io;
-use std::io::{Cursor, Read, Write};
-use std::process::Command;
+use std::io::{Cursor, Read};
+use std::process::{Command, Stdio};
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -121,16 +121,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         .unwrap()
                         .replace(".mp4", "av.mp4"),
                 )
-                .output()
-                .expect("Failed to execute command");
+                .stdout(Stdio::inherit())
+                .stderr(Stdio::inherit())
+                .spawn()?
+                .wait()
+                .expect("ffmpeg command failed");
 
-            println!("status: {}", output.status);
-            io::stdout()
-                .write_all(&output.stdout)
-                .expect("TODO: panic message");
-            io::stderr()
-                .write_all(&output.stderr)
-                .expect("TODO: panic message");
+            // println!("status: {}", output.status);
+            // io::stdout()
+            //     .write_all(&output.stdout)
+            //     .expect("TODO: panic message");
+            // io::stderr()
+            //     .write_all(&output.stderr)
+            //     .expect("TODO: panic message");
 
             // POST-Anfrage
             let mut file = File::open(format!("{temp_dir}/{file_name}").replace(".mp4", "av.mp4"))?;
