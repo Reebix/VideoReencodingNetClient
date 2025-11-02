@@ -14,6 +14,8 @@ struct Arguments {
     loop_: bool,
     #[arg(short, long, default_value_t = 1)]
     count: u32,
+    #[arg(long, default_value_t = false)]
+    hw_accel: bool,
 }
 
 fn abspath(p: &str) -> Option<String> {
@@ -106,9 +108,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             let client = Client::new();
 
-            // execute ffmpeg command
-            let output = Command::new("ffmpeg")
-                .arg("-i")
+            let mut cmd = Command::new("ffmpeg");
+
+            if args.hw_accel {
+                cmd.arg("-hwaccel")
+                    .arg("cuda")
+                    .arg("-hwaccel_output_format")
+                    .arg("cuda");
+            }
+
+            cmd.arg("-i")
                 .arg(abspath(format!("{temp_dir}/{file_name}").as_str()).unwrap())
                 .arg("-c:v")
                 .arg("av1_nvenc")
