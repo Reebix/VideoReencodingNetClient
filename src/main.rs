@@ -129,8 +129,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     abspath(format!("{temp_dir}/{file_name}").as_str())
                         .unwrap()
                         .replace(".mp4", "av.mp4")
-                        .replace(".avi", "av.avi")
-                        .replace(".mvk", "av.mkv"),
+                        .replace(".avi", "av.mp4")
+                        .replace(".mkv", "av.mp4"),
                 )
                 .stdout(Stdio::inherit())
                 .stderr(Stdio::inherit())
@@ -148,7 +148,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             // POST-Anfrage
             let mut file = File::open(format!("{temp_dir}/{file_name}").replace(".mp4", "av.mp4")
-                .replace(".avi", "av.avi").replace(".mvk", "av.mkv"))?;
+                .replace(".avi", "av.mp4").replace(".mkv", "av.mp4"))?;
 
             // check if file is not empty
             if file.metadata()?.len() < 1000 {
@@ -168,8 +168,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             std::fs::remove_file(format!("{temp_dir}/{file_name}"))?;
             std::fs::remove_file(format!("{temp_dir}/{file_name}").replace(".mp4", "av.mp4")
-            .replace(".avi", "av.avi")
-            .replace(".mvk", "av.mkv"))?;
+            .replace(".avi", "av.mp4")
+            .replace(".mkv", "av.mp4"))?;
         }
         if !loop_ {
             return Ok(());
